@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor and Patient Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a4a72;
+            font-size: 24px;
+            margin-top: 40px;
+        }
+
+        .search-bar {
+            width: 50%;
+            padding: 10px;
+            margin: 15px auto 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        table {
+            width: 90%;
+            max-width: 1000px;
+            border-collapse: collapse;
+            margin: 20px auto;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4a4a72;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e2e2f1;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Donor List</h1>
+    <input type="text" id="donor-search" class="search-bar" placeholder="Search Donor...">
+    <table id="donor-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Age</th>
+                <th>Blood Type</th>
+                <th>Contact Number</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody id="donor-list"></tbody>
+    </table>
+
+    <h1>Receiver List</h1>
+    <input type="text" id="patient-search" class="search-bar" placeholder="Search Patient...">
+    <table id="patient-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Age</th>
+                <th>Blood Type</th>
+                <th>Contact Number</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody id="patient-list"></tbody>
+    </table>
+
+    <!-- <h1>Remaining Donors List</h1>
+    <input type="text" id="remaining-search" class="search-bar" placeholder="Search Remaining Donors...">
+    <table id="remaining-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Address</th>
+                <th>Age</th>
+                <th>Blood Type</th>
+                <th>Contact Number</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody id="remaining-list"></tbody>
+    </table> -->
+
+    <script>
+        // Function to fetch and display donors data
+        fetch('http://localhost:3000/api/donors')
+            .then(response => response.json())
+            .then(donorData => {
+                const donorList = document.getElementById('donor-list');
+                donorData.forEach(donor => {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${donor.name}</td>
+                        <td>${donor.address}</td>
+                        <td>${donor.age}</td>
+                        <td>${donor.blood_type}</td>
+                        <td>${donor.contact_number}</td>
+                        <td>${donor.gender}</td>
+                    `;
+                    donorList.appendChild(row);
+                });
+
+                // Fetch and display patient data, then find remaining donors
+                fetch('http://localhost:3000/api/patients')
+                    .then(response => response.json())
+                    .then(patientData => {
+                        const patientList = document.getElementById('patient-list');
+                        const patientNames = patientData.map(patient => patient.name);
+
+                        // Populate Patient Table
+                        patientData.forEach(patient => {
+                            let row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${patient.name}</td>
+                                <td>${patient.address}</td>
+                                <td>${patient.age}</td>
+                                <td>${patient.blood_type}</td>
+                                <td>${patient.contact_number}</td>
+                                <td>${patient.gender}</td>
+                            `;
+                            patientList.appendChild(row);
+                        });
+
+                        // Filter donors to find remaining donors
+                        const remainingList = document.getElementById('remaining-list');
+                        donorData.forEach(donor => {
+                            if (!patientNames.includes(donor.name)) {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                                    <td>${donor.name}</td>
+                                    <td>${donor.address}</td>
+                                    <td>${donor.age}</td>
+                                    <td>${donor.blood_type}</td>
+                                    <td>${donor.contact_number}</td>
+                                    <td>${donor.gender}</td>
+                                `;
+                                remainingList.appendChild(row);
+                            }
+                        });
+                    })
+                    .catch(err => console.error('Error fetching patients:', err));
+            })
+            .catch(err => console.error('Error fetching donors:', err));
+
+        // Search function for filtering table rows
+        function filterTable(inputId, tableId) {
+            const input = document.getElementById(inputId);
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName('td');
+                let rowMatch = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                        rowMatch = true;
+                        break;
+                    }
+                }
+                rows[i].style.display = rowMatch ? "" : "none";
+            }
+        }
+
+        // Event listeners for search bars
+        document.getElementById('donor-search').addEventListener('keyup', () => {
+            filterTable('donor-search', 'donor-table');
+        });
+        document.getElementById('patient-search').addEventListener('keyup', () => {
+            filterTable('patient-search', 'patient-table');
+        });
+        document.getElementById('remaining-search').addEventListener('keyup', () => {
+            filterTable('remaining-search', 'remaining-table');
+        });
+    </script>
+</body>
+
+</html>

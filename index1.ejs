@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Donor and Patient Data</title>
+</head>
+<body>
+  <h1>Donor Data</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Age</th>
+        <th>Blood Type</th>
+        <th>Contact Number</th>
+        <th>Gender</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% donors.forEach(Donor => { %>
+      <tr>
+        <td><%= donor.name %></td>
+        <td><%= donor.address %></td>
+        <td><%= donor.age %></td>
+        <td><%= donor.blood_type %></td>
+        <td><%= donor.contact_number %></td>
+        <td><%= donor.gender %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <h1>Patient Data</h1>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Age</th>
+        <th>Blood Type</th>
+        <th>Contact Number</th>
+        <th>Gender</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% patients.forEach(Patient => { %>
+      <tr>
+        <td><%= Patient.name %></td>
+        <td><%= patient.address %></td>
+        <td><%= patient.age %></td>
+        <td><%= patient.blood_type %></td>
+        <td><%= patient.contact_number %></td>
+        <td><%= patient.gender %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>

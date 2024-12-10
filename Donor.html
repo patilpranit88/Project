@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donor Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        .container {
+            margin-top: 30px;
+            max-width: 400px;
+            /* Set a maximum width for the form */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            /* Ensures the form takes up the full width within its container */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+        <a class="navbar-brand" href="#">Make A Blood Relation</a>
+        <button class="navbar-toggler">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="Index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Donor.html">Donor</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="Receiver.html">Receiver</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="login.html">Employee</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="About.html">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2>Blood Donor Form</h2>
+        <form id="donorForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter name" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <input type="text" class="form-control" id="address" placeholder="Enter address" required>
+            </div>
+            <div class="form-group">
+                <label for="age">Age:</label>
+                <input type="number" class="form-control" id="age" placeholder="Enter age" required>
+            </div>
+            <div class="form-group">
+                <label for="blood_type">Blood Type:</label>
+                <select class="form-control" id="blood_type" required>
+                    <option value="">Select Blood Type</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="contact_number">Contact Number:</label>
+                <input type="text" class="form-control" id="contact_number" placeholder="Enter contact number" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <select class="form-control" id="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="button" class="btn btn-danger mt-2" id="clearButton">Clear Form</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('donorForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const donorData = {
+                name: document.getElementById('name').value,
+                address: document.getElementById('address').value,
+                age: document.getElementById('age').value,
+                blood_type: document.getElementById('blood_type').value,
+                contact_number: document.getElementById('contact_number').value,
+                gender: document.getElementById('gender').value
+            };
+
+            fetch('http://localhost:3000/api/donors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(donorData),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Donor added successfully!');
+                    console.log('Success:', data);
+                    // Clear the form fields after successful submission
+                    document.getElementById('donorForm').reset(); // Resets all fields to default values
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+
+        // Clear form fields when the clear button is clicked
+        document.getElementById('clearButton').addEventListener('click', function () {
+            document.getElementById('donorForm').reset(); // Reset all form fields
+            alert('Form cleared!'); // Show alert
+        });
+    </script>
+</body>
+
+</html>
